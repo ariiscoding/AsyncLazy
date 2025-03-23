@@ -1,7 +1,9 @@
 
 import Foundation
 
-enum LazyState<ValueType> {
-    case toBeCreated(factory: (() async throws -> ValueType))
-    case created(value: ValueType)
+enum LazyState<AssociatedType> {
+    case uninitiated(factory: (@Sendable () async -> AssociatedType))
+    case created(value: AssociatedType)
 }
+
+extension LazyState: Sendable where AssociatedType: Sendable {}
