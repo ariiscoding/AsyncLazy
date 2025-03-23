@@ -23,7 +23,7 @@ public final actor AsyncLazy<AssociatedType> where AssociatedType: Sendable {
                 let task = Task<AssociatedType, Never> {
                     let value = await factory()
                     
-                    self.initialize(value: value)
+                    await self.initialize(value: value)
                     
                     return value
                 }
@@ -65,7 +65,7 @@ public final actor AsyncLazy<AssociatedType> where AssociatedType: Sendable {
 // MARK: - Helpers
 
 extension AsyncLazy {
-    private func initialize(value: AssociatedType) {
+    private func initialize(value: AssociatedType) async {
         self.state = .initiated(value: value)
         
         // Run the initialization tasks
