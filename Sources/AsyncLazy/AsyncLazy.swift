@@ -20,16 +20,17 @@ public final actor AsyncLazy<AssociatedType> where AssociatedType: Sendable {
         get async {
             switch state {
             case .uninitiated(factory: let factory):
-                let value = await factory()
-                self.state = .initiated(value: value)
-                
-                // Run the initialization tasks
-                for task in self.initializationTasks {
-                    task.run(value)
+                let task = Task<AssociatedType, Never> {
+                    let value = await factory()
+                    
+                    self.initialize(value: value)
+                    
+                    return value
                 }
-                initializationTasks = []
-                
-                return value
+                self.state = .initiating(task: task)
+                return await task.value
+            case .initiating(task: let task):
+                return await task.value
             case .initiated(value: let value):
                 return value
             }
@@ -53,10 +54,24 @@ public final actor AsyncLazy<AssociatedType> where AssociatedType: Sendable {
     
     public func uponInitiation(task: InitializationTask<AssociatedType>) {
         switch state {
-        case .uninitiated(factory: _):
+        case .uninitiated, .initiating:
             self.initializationTasks.append(task)
         case .initiated(value: let value):
             task.run(value)
         }
+    }
+}
+
+// MARK: - Helpers
+
+extension AsyncLazy {
+    private func initialize(value: AssociatedType) {
+        self.state = .initiated(value: value)
+        
+        // Run the initialization tasks
+        for task in self.initializationTasks {
+            task.run(value)
+        }
+        initializationTasks = []
     }
 }
