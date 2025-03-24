@@ -1,19 +1,7 @@
 import Testing
 import Foundation
 @testable import AsyncLazy
-
-// MARK: - A small actor for concurrency-safe counting
-actor Counter {
-    private var _count = 0
-    
-    func increment() {
-        _count += 1
-    }
-    
-    func value() -> Int {
-        _count
-    }
-}
+import TestUtils
 
 struct AsyncLazyTests {
     
