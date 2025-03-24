@@ -24,12 +24,12 @@ struct AsyncLazyTests {
             42
         }
         
-        #expect(!lazy.isInitiated, "Should not be initiated before value is accessed.")
+        #expect(await lazy.isInitiated == false, "Should not be initiated before value is accessed.")
         
         let value = await lazy.value
         #expect(value == 42, "The value should be 42 once accessed.")
         
-        #expect(lazy.isInitiated, "Should be marked as initiated after requesting value.")
+        #expect(await lazy.isInitiated, "Should be marked as initiated after requesting value.")
     }
     
     /// Calls `value` multiple times and ensures the factory is invoked only once.
@@ -93,8 +93,8 @@ struct AsyncLazyTests {
         let strValue = await mappedLazy.value
         #expect(strValue == "Transformed to: 5")
         
-        #expect(lazyInt.isInitiated, "Base lazy should be initiated after value retrieval.")
-        #expect(mappedLazy.isInitiated, "Mapped lazy should also be initiated once accessed.")
+        #expect(await lazyInt.isInitiated, "Base lazy should be initiated after value retrieval.")
+        #expect(await mappedLazy.isInitiated, "Mapped lazy should also be initiated once accessed.")
     }
     
     /// Tests concurrency with multiple async callers, ensuring only one factory call occurs.
@@ -218,7 +218,7 @@ struct AsyncLazyTests {
             }
         }
         
-        #expect(baseLazy.isInitiated, "Value should be initiated after heavy concurrency.")
+        #expect(await baseLazy.isInitiated, "Value should be initiated after heavy concurrency.")
     }
 }
 
