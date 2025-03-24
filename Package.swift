@@ -21,15 +21,16 @@ let package = Package(
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
+        .testTarget(name: "TestUtils"),
         .target(
             name: "AsyncLazy"),
         .testTarget(
             name: "AsyncLazyTests",
-            dependencies: ["AsyncLazy"]
+            dependencies: ["AsyncLazy", "TestUtils"]
         ),
         .target(name: "AsyncLazySyncBridge",
                 dependencies: ["AsyncLazy"]),
         .testTarget(name: "AsyncLazySyncBridgeTests",
-                    dependencies: ["AsyncLazy", "AsyncLazySyncBridge"])
+                    dependencies: ["AsyncLazy", "AsyncLazySyncBridge", "TestUtils"])
     ]
 )

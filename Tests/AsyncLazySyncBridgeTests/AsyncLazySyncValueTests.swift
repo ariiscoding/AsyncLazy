@@ -2,6 +2,7 @@
 import Testing
 import Foundation
 @testable import AsyncLazy
+import TestUtils
 
 struct AsyncLazySyncValueTests {
     
